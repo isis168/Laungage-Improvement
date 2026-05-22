@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>言語トレーニング</title>
+</head>
+<body>
+  <h1>言語トレーニング</h1>
+  <p id="question">AIは人間の仕事を奪うと思うか？</p>
+
+  <textarea id="answer" rows="6" cols="50"></textarea>
+  <br><br>
+
+  <button onclick="submitAnswer()">提出</button>
+
+  <p id="result"></p>
+
+  <script>
+    function submitAnswer() {
+      const answer = document.getElementById("answer").value;
+      document.getElementById("result").innerText =
+        "あなたの回答: " + answer;
+    }
+  </script>
+</body>
+</html>

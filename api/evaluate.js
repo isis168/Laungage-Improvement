@@ -1,28 +1,37 @@
 export default async function handler(req, res) {
-  const { answer, question } = req.body;
+  try {
+    const { answer, question } = req.body;
 
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: "gpt-4.1-mini",
-      input: `
-以下の文章を評価してください。
+    if (!answer || !question) {
+      return res.status(400).json({ result: "データが不足してる" });
+    }
 
-【質問】
-${question}
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1-mini",
+        input: `質問: ${question}\n回答: ${answer}\n10点満点で評価して理由も書いて`
+      })
+    });
 
-【回答】
-${answer}
+    const data = await response.json();
 
-0〜10点で採点し、理由も書いてください。
-`
-    })
-  });
+    // データ確認（ここ重要）
+    console.log(data);
 
-  const data = await response.json();
-  res.json({ result: data.output[0].content[0].text });
+    if (!data.output) {
+      return res.json({ result: "AI応答エラー：" + JSON.stringify(data) });
+    }
+
+    const text = data.output[0].content[0].text;
+
+    res.json({ result: text });
+
+  } catch (error) {
+    res.json({ result: "サーバーエラー：" + error.message });
+  }
 }

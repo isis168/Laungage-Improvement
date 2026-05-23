@@ -14,12 +14,25 @@
 
   <p id="result"></p>
 
-  <script>
-    function submitAnswer() {
-      const answer = document.getElementById("answer").value;
-      document.getElementById("result").innerText =
-        "あなたの回答: " + answer;
-    }
-  </script>
-</body>
-</html>
+<script>
+async function submitAnswer() {
+  const answer = document.getElementById("answer").value;
+  const question = document.getElementById("question").innerText;
+
+  console.log("送信中..."); // ←これ追加
+
+  const res = await fetch("/api/evaluate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ answer, question })
+  });
+
+  const data = await res.json();
+
+  console.log("返ってきた:", data);
+
+  document.getElementById("result").innerText = data.result;
+}
+</script>

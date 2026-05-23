@@ -5,6 +5,7 @@
 </head>
 <body>
   <h1>言語トレーニング</h1>
+
   <p id="question">AIは人間の仕事を奪うと思うか？</p>
 
   <textarea id="answer" rows="6" cols="50"></textarea>
@@ -14,25 +15,30 @@
 
   <p id="result"></p>
 
-<script>
-async function submitAnswer() {
-  const answer = document.getElementById("answer").value;
-  const question = document.getElementById("question").innerText;
+  <script>
+    async function submitAnswer() {
+      const answer = document.getElementById("answer").value;
+      const question = document.getElementById("question").innerText;
 
-  console.log("送信中..."); // ←これ追加
+      document.getElementById("result").innerText = "評価中...";
 
-  const res = await fetch("/api/evaluate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ answer, question })
-  });
+      try {
+        const res = await fetch("/api/evaluate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ answer, question })
+        });
 
-  const data = await res.json();
+        const data = await res.json();
 
-  console.log("返ってきた:", data);
-
-  document.getElementById("result").innerText = data.result;
-}
-</script>
+        document.getElementById("result").innerText = data.result;
+      } catch (error) {
+        document.getElementById("result").innerText = "エラーが発生した";
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
